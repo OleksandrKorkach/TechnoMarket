@@ -6,10 +6,10 @@ import com.technomarket.technomarket.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/admin")
@@ -32,4 +32,22 @@ public class AdminController {
         AdminUserDto adminUserDto = AdminUserDto.fromUser(user);
         return new ResponseEntity<>(adminUserDto, HttpStatus.OK);
     }
+
+    @GetMapping("/users")
+    public ResponseEntity<List<AdminUserDto>> getUsers(){
+        List<User> usersFromDb = userService.getAll();
+        List<AdminUserDto> users = usersFromDb.stream()
+                .map(AdminUserDto::fromUser)
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(users);
+    }
+
+    @PostMapping("/users/{id}/delete")
+    public ResponseEntity<?> deleteUserById(@PathVariable Long id){
+        userService.delete(id);
+        return ResponseEntity.ok("Successfully deleted");
+    }
+
+
 }

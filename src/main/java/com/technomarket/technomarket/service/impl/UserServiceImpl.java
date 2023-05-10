@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,7 +31,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User register(User user) {
+    public void register(User user) {
         Role roleUser = roleRepository.findByName("ROLE_USER");
         List<Role> userRoles = new ArrayList<>();
         userRoles.add(roleUser);
@@ -38,10 +39,11 @@ public class UserServiceImpl implements UserService {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setRoles(userRoles);
         user.setStatus(Status.ACTIVE);
+        user.setCreated(LocalDateTime.now());
+        user.setUpdated(LocalDateTime.now());
         User registeredUser = userRepository.save(user);
 
         log.info("IN registration - user: {} successfully registered", registeredUser);
-        return registeredUser;
     }
 
     @Override
