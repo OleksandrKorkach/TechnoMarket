@@ -3,6 +3,7 @@ package com.technomarket.technomarket.entity;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -31,6 +32,11 @@ public class User extends BaseEntity{
     inverseJoinColumns = {@JoinColumn(name = "role_id", referencedColumnName = "id")})
     private List<Role> roles;
 
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "user")
+    private List<Product> products = new ArrayList<>();
+
+    @OneToMany(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY, mappedBy = "author")
+    private List<Feedback> feedbacks = new ArrayList<>();
 
 
 }
