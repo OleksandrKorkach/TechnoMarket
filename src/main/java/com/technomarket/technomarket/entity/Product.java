@@ -2,8 +2,11 @@ package com.technomarket.technomarket.entity;
 
 import com.technomarket.technomarket.entity.enums.Category;
 import lombok.Data;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -17,6 +20,10 @@ public class Product extends BaseEntity{
     @Column(name = "price")
     private Double price;
 
+    @LastModifiedDate
+    @Column(name = "updated")
+    private LocalDateTime updated;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "category")
     private Category category;
@@ -26,11 +33,11 @@ public class Product extends BaseEntity{
     @Column(name = "quantity")
     private Integer quantity;
 
-    @ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
-    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    @ManyToOne
+    @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "product")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "product")
     private List<Feedback> feedbacks;
 
 

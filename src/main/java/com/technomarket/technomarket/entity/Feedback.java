@@ -1,8 +1,11 @@
 package com.technomarket.technomarket.entity;
 
 import lombok.Data;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "feedback")
@@ -14,11 +17,15 @@ public class Feedback extends BaseEntity{
     @Column(name = "rate")
     private Integer rate;
 
-    @ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
-    @JoinColumn(name = "product_id", referencedColumnName = "id")
+    @LastModifiedDate
+    @Column(name = "updated")
+    private LocalDateTime updated;
+
+    @ManyToOne
+    @JoinColumn(name = "product_id")
     private Product product;
 
-    @ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
-    @JoinColumn(name = "user_id", referencedColumnName = "id")
-    private User author;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 }

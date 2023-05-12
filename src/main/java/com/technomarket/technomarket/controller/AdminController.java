@@ -22,7 +22,7 @@ public class AdminController {
         this.userService = userService;
     }
 
-    @GetMapping("/users/{id}")
+    @GetMapping("/user/{id}")
     public ResponseEntity<AdminUserDto> getUserById(@PathVariable Long id){
         User user = userService.findById(id);
         if (user == null){
@@ -43,7 +43,7 @@ public class AdminController {
         return ResponseEntity.ok(users);
     }
 
-    @PostMapping("/users/{id}/delete")
+    @PostMapping("/delete/user/{id}/")
     public ResponseEntity<?> deleteUserById(@PathVariable Long id){
         userService.delete(id);
         return ResponseEntity.ok("Successfully deleted");
