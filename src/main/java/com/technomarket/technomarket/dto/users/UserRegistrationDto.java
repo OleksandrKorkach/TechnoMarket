@@ -1,4 +1,4 @@
-package com.technomarket.technomarket.dto;
+package com.technomarket.technomarket.dto.users;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.technomarket.technomarket.entity.User;

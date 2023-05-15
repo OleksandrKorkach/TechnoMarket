@@ -1,16 +1,15 @@
 package com.technomarket.technomarket.entity;
 
 import lombok.Data;
-import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "feedback")
+@Table(name = "review")
 @Data
-public class Feedback extends BaseEntity{
+public class Review extends BaseEntity{
 
     @Column(name = "text")
     private String text;
@@ -28,4 +27,12 @@ public class Feedback extends BaseEntity{
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
+
+    @Override
+    public String toString() {
+        return "Review{" +
+                "id: " + super.getId() + ", " +
+                "text: " + text + ", " +
+                "rate: " + rate + "}";
+    }
 }

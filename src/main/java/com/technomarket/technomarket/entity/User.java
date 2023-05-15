@@ -2,10 +2,10 @@ package com.technomarket.technomarket.entity;
 
 import com.technomarket.technomarket.entity.enums.Status;
 import lombok.Data;
-import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +13,7 @@ import java.util.List;
 @Entity
 @Table(name = "users")
 @Data
-public class User extends BaseEntity{
+public class User extends BaseEntity {
 
     @Column(name = "username")
     private String username;
@@ -48,7 +48,7 @@ public class User extends BaseEntity{
     private List<Product> products = new ArrayList<>();
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY,  mappedBy = "user")
-    private List<Feedback> feedbacks = new ArrayList<>();
+    private List<Review> reviews = new ArrayList<>();
 
     @Override
     public String toString() {
@@ -56,6 +56,5 @@ public class User extends BaseEntity{
                 "id: " + super.getId() + ", " +
                 "username: " + username + "}";
     }
-
 
 }

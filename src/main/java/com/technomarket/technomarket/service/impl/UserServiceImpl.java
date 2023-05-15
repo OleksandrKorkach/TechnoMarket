@@ -6,6 +6,7 @@ import com.technomarket.technomarket.entity.enums.Status;
 import com.technomarket.technomarket.repository.RoleRepository;
 import com.technomarket.technomarket.repository.UserRepository;
 import com.technomarket.technomarket.service.UserService;
+import com.technomarket.technomarket.service.impl.exceptions.ResourceNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -49,6 +50,9 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<User> getAll() {
         List<User> allUsers = userRepository.findAll();
+        if (allUsers.isEmpty()){
+            throw new ResourceNotFoundException("No users in db");
+        }
         log.info("IN getAll - users: {} found", allUsers);
         return allUsers;
     }
@@ -63,13 +67,21 @@ public class UserServiceImpl implements UserService {
     @Override
     public User findById(Long id) {
         User user = userRepository.findById(id).orElse(null);
+        if (user == null){
+            throw new ResourceNotFoundException("User not found with id: " + id);
+        }
         log.info("IN findById - user: {} found by id ", user);
         return user;
     }
 
     @Override
-    public void delete(Long id) {
-        userRepository.deleteById(id);
-        log.info("successfully deleted user with id {}", id);
+    public void deleteById(Long id) {
+        if (userRepository.existsById(id)){
+            userRepository.deleteById(id);
+            log.info("successfully deleted user with id {}", id);
+        } else {
+            throw new ResourceNotFoundException("User not found with id: " + id);
+        }
     }
+
 }

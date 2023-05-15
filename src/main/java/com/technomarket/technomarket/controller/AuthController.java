@@ -1,6 +1,7 @@
 package com.technomarket.technomarket.controller;
 
-import com.technomarket.technomarket.dto.AuthenticationRequestDto;
+import com.technomarket.technomarket.dto.users.AuthenticationRequestDto;
+import com.technomarket.technomarket.dto.users.UserRegistrationDto;
 import com.technomarket.technomarket.entity.User;
 import com.technomarket.technomarket.security.jwt.JwtTokenProvider;
 import com.technomarket.technomarket.service.UserService;
@@ -53,5 +54,12 @@ public class AuthController {
         }catch (AuthenticationException e){
             throw new BadCredentialsException("Invalid username or password");
         }
+    }
+
+    @PostMapping("/registration")
+    public ResponseEntity<?> register(@RequestBody UserRegistrationDto registrationDto){
+        User user = registrationDto.toUser();
+        userService.register(user);
+        return ResponseEntity.ok().body("Successfully created!");
     }
 }

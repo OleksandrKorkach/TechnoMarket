@@ -2,7 +2,6 @@ package com.technomarket.technomarket.entity;
 
 import com.technomarket.technomarket.entity.enums.Category;
 import lombok.Data;
-import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
 import javax.persistence.*;
@@ -38,8 +37,17 @@ public class Product extends BaseEntity{
     private User user;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "product")
-    private List<Feedback> feedbacks;
+    private List<Review> reviews;
 
 
-
+    @Override
+    public String toString() {
+        return "Product{" +
+                "id: " + super.getId() + ", " +
+                "title: " +  title + ", " +
+                "description: " + description + ", " +
+                "price: " + price + ", " +
+                "quantity: " + quantity + ", " +
+                "username: " + user.getUsername() + "}";
+    }
 }
