@@ -1,7 +1,7 @@
 package com.technomarket.technomarket.controller;
 
 import com.technomarket.technomarket.dto.users.UserDto;
-import com.technomarket.technomarket.dto.users.UserRegistrationDto;
+import com.technomarket.technomarket.dto.users.UserSummaryDto;
 import com.technomarket.technomarket.entity.User;
 import com.technomarket.technomarket.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,11 +21,11 @@ public class UserController {
         this.userService = userService;
     }
 
-    @GetMapping("/")
-    public ResponseEntity<List<UserDto>> getUsers(){
+    @GetMapping
+    public ResponseEntity<List<UserSummaryDto>> getUsers(){
         List<User> usersFromDb = userService.getAll();
-        List<UserDto> users = usersFromDb.stream()
-                .map(UserDto::fromUser)
+        List<UserSummaryDto> users = usersFromDb.stream()
+                .map(UserSummaryDto::fromUser)
                 .collect(Collectors.toList());
         return ResponseEntity.ok(users);
     }

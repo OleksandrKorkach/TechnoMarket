@@ -1,10 +1,10 @@
 package com.technomarket.technomarket.controller;
 
-import com.technomarket.technomarket.dto.AdminUserDto;
+import com.technomarket.technomarket.dto.admin.AdminUserDto;
+import com.technomarket.technomarket.dto.admin.AdminUserSummaryDto;
 import com.technomarket.technomarket.entity.User;
 import com.technomarket.technomarket.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,30 +22,25 @@ public class AdminController {
         this.userService = userService;
     }
 
-    @GetMapping("/user/{id}")
+    @GetMapping("/users/user{id}")
     public ResponseEntity<AdminUserDto> getUserById(@PathVariable Long id){
         User user = userService.findById(id);
-        if (user == null){
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        }
-
         AdminUserDto adminUserDto = AdminUserDto.fromUser(user);
-        return new ResponseEntity<>(adminUserDto, HttpStatus.OK);
+        return ResponseEntity.ok(adminUserDto);
     }
 
     @GetMapping("/users")
-    public ResponseEntity<List<AdminUserDto>> getUsers(){
+    public ResponseEntity<List<AdminUserSummaryDto>> getUsers(){
         List<User> usersFromDb = userService.getAll();
-        List<AdminUserDto> users = usersFromDb.stream()
-                .map(AdminUserDto::fromUser)
+        List<AdminUserSummaryDto> users = usersFromDb.stream()
+                .map(AdminUserSummaryDto::fromUser)
                 .collect(Collectors.toList());
-
         return ResponseEntity.ok(users);
     }
 
-    @PostMapping("/delete/user/{id}/")
+    @PostMapping("/users/user{id}/delete")
     public ResponseEntity<?> deleteUserById(@PathVariable Long id){
-        userService.delete(id);
+        userService.deleteById(id);
         return ResponseEntity.ok("Successfully deleted");
     }
 

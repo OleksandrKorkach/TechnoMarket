@@ -1,7 +1,7 @@
 package com.technomarket.technomarket.controller;
 
-import com.technomarket.technomarket.dto.users.AuthenticationRequestDto;
-import com.technomarket.technomarket.dto.users.UserRegistrationDto;
+import com.technomarket.technomarket.dto.users.auth.AuthenticationRequestDto;
+import com.technomarket.technomarket.dto.users.auth.UserRegistrationDto;
 import com.technomarket.technomarket.entity.User;
 import com.technomarket.technomarket.security.jwt.JwtTokenProvider;
 import com.technomarket.technomarket.service.UserService;

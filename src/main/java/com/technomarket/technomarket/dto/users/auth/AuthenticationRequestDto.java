@@ -1,4 +1,4 @@
-package com.technomarket.technomarket.dto.users;
+package com.technomarket.technomarket.dto.users.auth;
 
 import lombok.Data;
 

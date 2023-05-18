@@ -1,8 +1,8 @@
 package com.technomarket.technomarket.controller;
 
-import com.technomarket.technomarket.dto.products.ReviewDto;
 import com.technomarket.technomarket.dto.products.ProductDto;
-import com.technomarket.technomarket.dto.users.AdminUserDto;
+import com.technomarket.technomarket.dto.products.ProductSummaryDto;
+import com.technomarket.technomarket.dto.reviews.ReviewDto;
 import com.technomarket.technomarket.entity.Review;
 import com.technomarket.technomarket.entity.Product;
 import com.technomarket.technomarket.service.ProductService;
@@ -11,7 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,15 +28,14 @@ public class ProductController {
     public ResponseEntity<?> getProductById(@PathVariable Long id){
         Product product = productService.getProductById(id);
         ProductDto productDto = ProductDto.fromProduct(product);
-        System.out.println(productDto);
         return ResponseEntity.ok(productDto);
     }
 
     @GetMapping
-    public ResponseEntity<List<ProductDto>> getAllProducts(){
+    public ResponseEntity<List<ProductSummaryDto>> getAllProducts(){
         List<Product> productsFromDb = productService.getProducts();
-        List<ProductDto> products = productsFromDb.stream()
-                .map(ProductDto::fromProduct)
+        List<ProductSummaryDto> products = productsFromDb.stream()
+                .map(ProductSummaryDto::fromProduct)
                 .collect(Collectors.toList());
 
         return ResponseEntity.ok(products);
