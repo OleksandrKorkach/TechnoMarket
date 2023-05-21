@@ -3,6 +3,7 @@ package com.technomarket.technomarket.service.impl;
 import com.technomarket.technomarket.entity.Review;
 import com.technomarket.technomarket.entity.Product;
 import com.technomarket.technomarket.entity.User;
+import com.technomarket.technomarket.entity.enums.Category;
 import com.technomarket.technomarket.repository.ReviewRepository;
 import com.technomarket.technomarket.repository.ProductRepository;
 import com.technomarket.technomarket.repository.UserRepository;
@@ -11,6 +12,9 @@ import com.technomarket.technomarket.service.impl.exceptions.ResourceNotFoundExc
 import com.technomarket.technomarket.service.impl.exceptions.UnauthorizedProductAccessException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.security.Principal;
@@ -22,6 +26,7 @@ public class ProductServiceImpl implements ProductService {
     private final ProductRepository productRepository;
     private final UserRepository userRepository;
     private final ReviewRepository reviewRepository;
+    private final Integer pageSize = 20;
 
     @Autowired
     public ProductServiceImpl(ProductRepository productRepository, UserRepository userRepository, ReviewRepository reviewRepository) {
@@ -32,7 +37,6 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public void createProduct(Product product, Principal principal) {
-        product.setCategory(null);
         product.setUser(getUserByPrincipal(principal));
         log.info("Saving new Product. Title: {}; Owner username: {}", product.getTitle(), product.getUser().getUsername());
         productRepository.save(product);
@@ -61,8 +65,9 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<Product> getProducts() {
-        return productRepository.findAll();
+    public List<Product> getProducts(Integer pageNumber) {
+        Pageable pageable = PageRequest.of(pageNumber, pageSize);
+        return productRepository.findAll(pageable).getContent();
     }
 
     @Override

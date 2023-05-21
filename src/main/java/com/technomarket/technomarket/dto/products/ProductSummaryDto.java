@@ -3,6 +3,7 @@ package com.technomarket.technomarket.dto.products;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.technomarket.technomarket.dto.users.UserProductOwnerDto;
 import com.technomarket.technomarket.entity.Product;
+import com.technomarket.technomarket.entity.enums.Category;
 import lombok.Data;
 
 @Data
@@ -13,6 +14,7 @@ public class ProductSummaryDto {
     private String description;
     private Double price;
     private Integer quantity;
+    private Category category;
 
     public static ProductSummaryDto fromProduct(Product product){
         ProductSummaryDto dto = new ProductSummaryDto();
@@ -21,6 +23,7 @@ public class ProductSummaryDto {
         dto.setDescription(product.getDescription());
         dto.setPrice(product.getPrice());
         dto.setQuantity(product.getQuantity());
+        dto.setCategory(product.getCategory());
         return dto;
     }
 }

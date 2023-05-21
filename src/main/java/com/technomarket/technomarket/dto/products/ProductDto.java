@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.technomarket.technomarket.dto.reviews.ReviewDto;
 import com.technomarket.technomarket.dto.users.UserProductOwnerDto;
 import com.technomarket.technomarket.entity.Product;
+import com.technomarket.technomarket.entity.enums.Category;
 import lombok.Data;
 
 import java.util.List;
@@ -18,6 +19,7 @@ public class ProductDto {
     private Double price;
     private Integer quantity;
     private Boolean in_stock;
+    private Category category;
     private UserProductOwnerDto user;
     private List<ReviewDto> reviews;
 
@@ -28,6 +30,7 @@ public class ProductDto {
         product.setPrice(price);
         product.setQuantity(quantity);
         product.setInStock(in_stock);
+        product.setCategory(category);
         return product;
     }
 
@@ -39,10 +42,12 @@ public class ProductDto {
         dto.setPrice(product.getPrice());
         dto.setQuantity(product.getQuantity());
         dto.setIn_stock(product.getInStock());
+        dto.setCategory(product.getCategory());
         dto.setUser(UserProductOwnerDto.fromUser(product.getUser()));
         dto.setReviews(product.getReviews().stream()
                 .map(ReviewDto::fromReview)
                 .collect(Collectors.toList()));
+
         return dto;
     }
 }
