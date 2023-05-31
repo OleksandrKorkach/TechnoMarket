@@ -3,7 +3,6 @@ package com.technomarket.technomarket.service.impl;
 import com.technomarket.technomarket.entity.Review;
 import com.technomarket.technomarket.entity.Product;
 import com.technomarket.technomarket.entity.User;
-import com.technomarket.technomarket.entity.enums.Category;
 import com.technomarket.technomarket.repository.ReviewRepository;
 import com.technomarket.technomarket.repository.ProductRepository;
 import com.technomarket.technomarket.repository.UserRepository;
@@ -14,7 +13,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.security.Principal;

@@ -2,8 +2,6 @@ package com.technomarket.technomarket.service;
 
 import com.technomarket.technomarket.entity.Review;
 import com.technomarket.technomarket.entity.Product;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 
 import java.security.Principal;
 import java.util.List;

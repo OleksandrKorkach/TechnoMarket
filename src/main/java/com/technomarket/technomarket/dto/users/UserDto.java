@@ -1,11 +1,10 @@
 package com.technomarket.technomarket.dto.users;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.technomarket.technomarket.dto.admin.AdminUserSummaryDto;
 import com.technomarket.technomarket.dto.products.ProductSummaryDto;
 import com.technomarket.technomarket.dto.reviews.ReviewContentDto;
 import com.technomarket.technomarket.entity.User;
-import lombok.Data;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
