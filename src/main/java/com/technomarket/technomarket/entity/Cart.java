@@ -22,8 +22,5 @@ public class Cart {
             inverseJoinColumns = @JoinColumn(name = "product_id"))
     private List<Product> products;
 
-//    @Transient
-//    private Double totalPrice;
-
 
 }

@@ -7,11 +7,13 @@ import com.technomarket.technomarket.repository.RoleRepository;
 import com.technomarket.technomarket.repository.UserRepository;
 import com.technomarket.technomarket.service.UserService;
 import com.technomarket.technomarket.service.impl.exceptions.ResourceNotFoundException;
+import com.technomarket.technomarket.service.impl.exceptions.UnauthorizedProductAccessException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -55,6 +57,13 @@ public class UserServiceImpl implements UserService {
         }
         log.info("IN getAll - users: {} found", allUsers);
         return allUsers;
+    }
+
+    public User getUserByPrincipal(Principal principal) {
+        if (principal == null) {
+            throw new UnauthorizedProductAccessException("Unauthorized request, please login first");
+        }
+        return userRepository.findByUsername(principal.getName());
     }
 
     @Override
