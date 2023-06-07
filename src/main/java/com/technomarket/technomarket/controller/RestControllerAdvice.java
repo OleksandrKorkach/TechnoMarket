@@ -1,7 +1,7 @@
 package com.technomarket.technomarket.controller;
 
 import com.technomarket.technomarket.service.impl.exceptions.ContentAlreadyExistException;
-import com.technomarket.technomarket.service.impl.exceptions.UnauthorizedProductAccessException;
+import com.technomarket.technomarket.service.impl.exceptions.UnauthorizedAccessException;
 import com.technomarket.technomarket.service.impl.exceptions.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,9 +18,9 @@ public class RestControllerAdvice {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
     }
 
-    @ExceptionHandler(UnauthorizedProductAccessException.class)
+    @ExceptionHandler(UnauthorizedAccessException.class)
     @ResponseStatus(HttpStatus.FORBIDDEN)
-    public ResponseEntity<String> handleUnauthorizedProductAccessException(UnauthorizedProductAccessException e){
+    public ResponseEntity<String> handleUnauthorizedAccessException(UnauthorizedAccessException e){
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
     }
 

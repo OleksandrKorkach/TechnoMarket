@@ -8,7 +8,7 @@ import com.technomarket.technomarket.repository.ProductRepository;
 import com.technomarket.technomarket.repository.UserRepository;
 import com.technomarket.technomarket.service.ProductService;
 import com.technomarket.technomarket.service.impl.exceptions.ResourceNotFoundException;
-import com.technomarket.technomarket.service.impl.exceptions.UnauthorizedProductAccessException;
+import com.technomarket.technomarket.service.impl.exceptions.UnauthorizedAccessException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -42,7 +42,7 @@ public class ProductServiceImpl implements ProductService {
 
     public User getUserByPrincipal(Principal principal) {
         if (principal == null) {
-            throw new UnauthorizedProductAccessException("Unauthorized request, please login first");
+            throw new UnauthorizedAccessException("Unauthorized request, please login first");
         }
         return userRepository.findByUsername(principal.getName());
     }
@@ -58,7 +58,7 @@ public class ProductServiceImpl implements ProductService {
             productRepository.deleteById(id);
             log.info("Product with id {} was deleted by {}", id, owner);
         } else {
-            throw new UnauthorizedProductAccessException("You don't have enough authority to delete this product");
+            throw new UnauthorizedAccessException("You don't have enough authority to delete this product");
         }
     }
 

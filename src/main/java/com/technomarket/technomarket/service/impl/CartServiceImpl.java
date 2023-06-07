@@ -7,15 +7,13 @@ import com.technomarket.technomarket.repository.CartRepository;
 import com.technomarket.technomarket.service.CartService;
 import com.technomarket.technomarket.service.UserService;
 import com.technomarket.technomarket.service.impl.exceptions.ContentAlreadyExistException;
-import com.technomarket.technomarket.service.impl.exceptions.ResourceNotFoundException;
-import com.technomarket.technomarket.service.impl.exceptions.UnauthorizedProductAccessException;
+import com.technomarket.technomarket.service.impl.exceptions.UnauthorizedAccessException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.security.Principal;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -41,7 +39,7 @@ public class CartServiceImpl implements CartService {
 
     public Cart getCartByPrincipal(Principal principal){
         if (principal == null){
-            throw new UnauthorizedProductAccessException("User is not authorized!");
+            throw new UnauthorizedAccessException("User is not authorized!");
         }
         String username = principal.getName();
         User user = userService.findByUsername(username);

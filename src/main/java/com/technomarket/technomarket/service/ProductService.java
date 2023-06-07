@@ -9,11 +9,11 @@ import java.util.List;
 public interface ProductService {
     void createProduct(Product product, Principal principal);
 
-    void deleteProduct(Long id, Principal principal);
+    void deleteProduct(Long productId, Principal principal);
 
     List<Product> getProducts(Integer pageNumber);
 
-    Product getProductById(Long id);
+    Product getProductById(Long productId);
 
     void createReview(Product product, Review review, Principal principal);
 

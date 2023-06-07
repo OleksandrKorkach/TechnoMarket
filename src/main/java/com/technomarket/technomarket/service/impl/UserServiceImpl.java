@@ -7,7 +7,7 @@ import com.technomarket.technomarket.repository.RoleRepository;
 import com.technomarket.technomarket.repository.UserRepository;
 import com.technomarket.technomarket.service.UserService;
 import com.technomarket.technomarket.service.impl.exceptions.ResourceNotFoundException;
-import com.technomarket.technomarket.service.impl.exceptions.UnauthorizedProductAccessException;
+import com.technomarket.technomarket.service.impl.exceptions.UnauthorizedAccessException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -61,7 +61,7 @@ public class UserServiceImpl implements UserService {
 
     public User getUserByPrincipal(Principal principal) {
         if (principal == null) {
-            throw new UnauthorizedProductAccessException("Unauthorized request, please login first");
+            throw new UnauthorizedAccessException("Unauthorized request, please login first");
         }
         return userRepository.findByUsername(principal.getName());
     }

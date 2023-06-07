@@ -10,7 +10,7 @@ public interface CartService {
     Cart getCart(Principal principal);
     void addToCart(Product product, Principal principal);
 
-    Cart deleteFromCart(Long id, Principal principal);
+    Cart deleteFromCart(Long productId, Principal principal);
 
 
 }
