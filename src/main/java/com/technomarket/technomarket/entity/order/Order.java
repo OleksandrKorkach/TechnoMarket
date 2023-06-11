@@ -47,4 +47,9 @@ public class Order {
     @Enumerated(EnumType.STRING)
     private DeliveryMethod deliveryMethod;
 
+
+    @PrePersist
+    private void init() {
+        created = LocalDateTime.now();
+    }
 }

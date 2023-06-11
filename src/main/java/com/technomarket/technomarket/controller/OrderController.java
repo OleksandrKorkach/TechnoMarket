@@ -2,6 +2,7 @@ package com.technomarket.technomarket.controller;
 
 import com.technomarket.technomarket.dto.order.OrderDto;
 import com.technomarket.technomarket.dto.order.OrderSummaryDto;
+import com.technomarket.technomarket.entity.order.DeliveryPoint;
 import com.technomarket.technomarket.entity.order.Order;
 import com.technomarket.technomarket.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,6 +49,13 @@ public class OrderController {
     public ResponseEntity<?> createOrderFromCart(Principal principal){
         orderService.createOrderFromCart(principal);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/get/delivery_points")
+    public ResponseEntity<?> getDeliveryPoints(
+            @RequestParam(value = "city", required = false) String city){
+        List<DeliveryPoint> deliveryPoints = orderService.getDeliveryPoints(city);
+        return ResponseEntity.ok(deliveryPoints);
     }
 
 }

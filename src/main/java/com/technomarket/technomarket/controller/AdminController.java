@@ -24,18 +24,18 @@ public class AdminController {
 
     @GetMapping("/users/user{id}")
     public ResponseEntity<AdminUserDto> getUserById(@PathVariable Long id){
-        User user = userService.findById(id);
-        AdminUserDto adminUserDto = AdminUserDto.fromUser(user);
-        return ResponseEntity.ok(adminUserDto);
+        User user = userService.getUserById(id);
+        AdminUserDto response = AdminUserDto.fromUser(user);
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/users")
     public ResponseEntity<List<AdminUserSummaryDto>> getUsers(){
-        List<User> usersFromDb = userService.getAll();
-        List<AdminUserSummaryDto> users = usersFromDb.stream()
+        List<User> users = userService.getAll();
+        List<AdminUserSummaryDto> response = users.stream()
                 .map(AdminUserSummaryDto::fromUser)
                 .collect(Collectors.toList());
-        return ResponseEntity.ok(users);
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/users/user{id}/delete")

@@ -21,14 +21,10 @@ import java.util.Optional;
 public class CartController {
 
     private final CartService cartService;
-    private final UserService userService;
-    private final ProductService productService;
 
     @Autowired
-    public CartController(CartService cartService, UserService userService, ProductService productService) {
+    public CartController(CartService cartService) {
         this.cartService = cartService;
-        this.userService = userService;
-        this.productService = productService;
     }
 
     @GetMapping
@@ -40,7 +36,7 @@ public class CartController {
 
     @PostMapping("/add/product-{productId}")
     public ResponseEntity<?> addProductToCart(@PathVariable Long productId, Principal principal){
-        cartService.addToCart(productService.getProductById(productId), principal);
+        cartService.addToCart(productId, principal);
         return ResponseEntity.ok("successfully added!");
     }
 

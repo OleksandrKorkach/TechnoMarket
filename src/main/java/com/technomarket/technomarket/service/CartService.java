@@ -8,7 +8,8 @@ import java.security.Principal;
 public interface CartService {
 
     Cart getCart(Principal principal);
-    void addToCart(Product product, Principal principal);
+
+    void addToCart(Long productId, Principal principal);
 
     Cart deleteFromCart(Long productId, Principal principal);
 

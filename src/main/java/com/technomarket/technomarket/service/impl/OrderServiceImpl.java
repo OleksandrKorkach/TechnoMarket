@@ -3,7 +3,9 @@ package com.technomarket.technomarket.service.impl;
 import com.technomarket.technomarket.entity.Product;
 import com.technomarket.technomarket.entity.enums.DeliveryMethod;
 import com.technomarket.technomarket.entity.enums.OrderStatus;
+import com.technomarket.technomarket.entity.order.DeliveryPoint;
 import com.technomarket.technomarket.entity.order.Order;
+import com.technomarket.technomarket.repository.DeliveryPointRepository;
 import com.technomarket.technomarket.repository.OrderRepository;
 import com.technomarket.technomarket.service.CartService;
 import com.technomarket.technomarket.service.OrderService;
@@ -22,16 +24,18 @@ import java.util.List;
 @Slf4j
 public class OrderServiceImpl implements OrderService {
     private final OrderRepository orderRepository;
+    private final DeliveryPointRepository deliveryPointRepository;
     private final ProductService productService;
     private final UserService userService;
     private final CartService cartService;
 
     @Autowired
-    public OrderServiceImpl(OrderRepository orderRepository, ProductService productService, UserService userService, CartService cartService) {
+    public OrderServiceImpl(OrderRepository orderRepository, ProductService productService, UserService userService, CartService cartService, DeliveryPointRepository deliveryPointRepository) {
         this.orderRepository = orderRepository;
         this.productService = productService;
         this.userService = userService;
         this.cartService = cartService;
+        this.deliveryPointRepository = deliveryPointRepository;
     }
 
     @Override
@@ -52,7 +56,8 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public void createOrderFromCart(Principal principal) {
         Order order = new Order();
-        List<Product> products = cartService.getCart(principal).getProducts();
+        List<Product> products = new ArrayList<>();
+        products.addAll(cartService.getCart(principal).getProducts());
         order.setProducts(products);
         order.setUser(userService.getUserByPrincipal(principal));
         Double orderPrice = 0.0;
@@ -63,6 +68,8 @@ public class OrderServiceImpl implements OrderService {
         order.setStatus(OrderStatus.WAITING_FOR_DELIVERY);
         order.setDeliveryMethod(DeliveryMethod.IN_DELIVERY_POINT);
         order.setDeliveryPoint("Very big cool delivery point");
+        System.out.println(order);
+        orderRepository.save(order);
     }
 
     @Override
@@ -87,4 +94,15 @@ public class OrderServiceImpl implements OrderService {
             throw new UnauthorizedAccessException("You don't have enough authorities to get this order");
         }
     }
+
+    @Override
+    public List<DeliveryPoint> getDeliveryPoints(String city) {
+        if (city == null){
+            return deliveryPointRepository.findAll();
+        } else {
+            return deliveryPointRepository.findDeliveryPointByCity(city);
+        }
+
+    }
+
 }

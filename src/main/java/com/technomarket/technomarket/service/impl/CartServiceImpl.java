@@ -5,6 +5,7 @@ import com.technomarket.technomarket.entity.Product;
 import com.technomarket.technomarket.entity.User;
 import com.technomarket.technomarket.repository.CartRepository;
 import com.technomarket.technomarket.service.CartService;
+import com.technomarket.technomarket.service.ProductService;
 import com.technomarket.technomarket.service.UserService;
 import com.technomarket.technomarket.service.impl.exceptions.ContentAlreadyExistException;
 import com.technomarket.technomarket.service.impl.exceptions.UnauthorizedAccessException;
@@ -22,10 +23,10 @@ public class CartServiceImpl implements CartService {
 
     private final UserService userService;
     private final CartRepository cartRepository;
-    private final ProductServiceImpl productService;
+    private final ProductService productService;
 
     @Autowired
-    public CartServiceImpl(UserService userService, CartRepository cartRepository, ProductServiceImpl productService) {
+    public CartServiceImpl(UserService userService, CartRepository cartRepository, ProductService productService) {
         this.userService = userService;
         this.cartRepository = cartRepository;
         this.productService = productService;
@@ -55,10 +56,11 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public void addToCart(Product product, Principal principal){
+    public void addToCart(Long productId, Principal principal){
         Cart cart = getCart(principal);
+        Product product = productService.getProductById(productId);
         if (cart.getProducts().stream()
-                .anyMatch(productFromCart -> productFromCart.getId().equals(product.getId()))){
+                .anyMatch(productFromCart -> productFromCart.getId().equals(productId))){
             throw new ContentAlreadyExistException("Product is already in cart");
         }
         cart.getProducts().add(product);
