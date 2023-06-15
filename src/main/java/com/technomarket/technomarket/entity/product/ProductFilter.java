@@ -1,4 +1,4 @@
-package com.technomarket.technomarket.repository.product;
+package com.technomarket.technomarket.entity.product;
 
 import com.technomarket.technomarket.entity.enums.Category;
 import lombok.Data;

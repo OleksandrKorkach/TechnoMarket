@@ -1,9 +1,10 @@
 package com.technomarket.technomarket.controller;
 
+import com.technomarket.technomarket.dto.order.DeliveryPointDto;
 import com.technomarket.technomarket.dto.order.OrderDto;
 import com.technomarket.technomarket.dto.order.OrderSummaryDto;
 import com.technomarket.technomarket.entity.order.DeliveryPoint;
-import com.technomarket.technomarket.entity.order.Order;
+import com.technomarket.technomarket.entity.order.OrderCreationRequest;
 import com.technomarket.technomarket.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -11,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/orders")
@@ -24,37 +24,35 @@ public class OrderController {
     }
 
     @GetMapping
-    public ResponseEntity<?> getOrderList(Principal principal){
-        List<Order> orders = orderService.getOrdersByPrincipal(principal);
-        List<OrderSummaryDto> response = orders.stream()
-                .map(OrderSummaryDto::fromOrder)
-                .collect(Collectors.toList());
-        return ResponseEntity.ok(response);
+    public ResponseEntity<List<OrderSummaryDto>> getOrderList(Principal principal) {
+        List<OrderSummaryDto> orders = orderService.getOrdersSummaryDtoByPrincipal(principal);
+        return ResponseEntity.ok(orders);
     }
 
     @GetMapping("/{orderId}")
-    public ResponseEntity<?> getOrderById(@PathVariable Long orderId, Principal principal){
-        Order order = orderService.getOrderById(orderId, principal);
-        OrderDto response = OrderDto.fromOrder(order);
-        return ResponseEntity.ok(response);
+    public ResponseEntity<OrderDto> getOrderById(@PathVariable Long orderId, Principal principal) {
+        OrderDto order = orderService.getOrderDtoById(orderId, principal);
+        return ResponseEntity.ok(order);
     }
 
-    @PostMapping("/create/from/product-{id}")
-    public ResponseEntity<?> createOrderFromProduct(@PathVariable Long id, Principal principal){
-        orderService.createOrderFromProduct(id, principal);
-        return ResponseEntity.ok().build();
+    @PostMapping("/create/from/product-{productId}")
+    public ResponseEntity<?> createOrderFromProduct(@PathVariable Long productId,
+                                                    @ModelAttribute("request") OrderCreationRequest request) {
+        request.setProductId(productId);
+        orderService.createOrderFromProduct(request);
+        return ResponseEntity.ok("successfully created order from product: " + productId);
     }
 
     @PostMapping("/create/from/cart")
-    public ResponseEntity<?> createOrderFromCart(Principal principal){
-        orderService.createOrderFromCart(principal);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<?> createOrderFromCart(@ModelAttribute("request") OrderCreationRequest request) {
+        orderService.createOrderFromCart(request);
+        return ResponseEntity.ok("Successfully created order from cart!");
     }
 
     @GetMapping("/get/delivery_points")
-    public ResponseEntity<?> getDeliveryPoints(
-            @RequestParam(value = "city", required = false) String city){
-        List<DeliveryPoint> deliveryPoints = orderService.getDeliveryPoints(city);
+    public ResponseEntity<List<DeliveryPointDto>> getDeliveryPoints(
+            @RequestParam(value = "city", required = false) String city) {
+        List<DeliveryPointDto> deliveryPoints = orderService.getDeliveryPointsDto(city);
         return ResponseEntity.ok(deliveryPoints);
     }
 

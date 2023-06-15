@@ -1,5 +1,8 @@
 package com.technomarket.technomarket.entity;
 
+import com.technomarket.technomarket.entity.BaseEntity;
+import com.technomarket.technomarket.entity.User;
+import com.technomarket.technomarket.entity.product.Product;
 import lombok.Data;
 import org.springframework.data.annotation.LastModifiedDate;
 
@@ -9,7 +12,7 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "review")
 @Data
-public class Review extends BaseEntity{
+public class Review extends BaseEntity {
 
     @Column(name = "text")
     private String text;

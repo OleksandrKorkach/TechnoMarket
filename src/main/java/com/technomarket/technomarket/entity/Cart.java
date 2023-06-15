@@ -1,5 +1,6 @@
 package com.technomarket.technomarket.entity;
 
+import com.technomarket.technomarket.entity.product.Product;
 import lombok.Data;
 
 import javax.persistence.*;

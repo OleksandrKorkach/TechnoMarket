@@ -1,8 +1,7 @@
 package com.technomarket.technomarket.dto.products;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.technomarket.technomarket.dto.users.UserProductOwnerDto;
-import com.technomarket.technomarket.entity.Product;
+import com.technomarket.technomarket.entity.product.Product;
 import com.technomarket.technomarket.entity.enums.Category;
 import lombok.Data;
 

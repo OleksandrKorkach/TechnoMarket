@@ -1,5 +1,8 @@
-package com.technomarket.technomarket.entity;
+package com.technomarket.technomarket.entity.product;
 
+import com.technomarket.technomarket.entity.BaseEntity;
+import com.technomarket.technomarket.entity.Review;
+import com.technomarket.technomarket.entity.User;
 import com.technomarket.technomarket.entity.enums.Category;
 import lombok.Data;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -11,7 +14,7 @@ import java.util.List;
 @Entity
 @Table(name = "product")
 @Data
-public class Product extends BaseEntity{
+public class Product extends BaseEntity {
     @Column(name = "title")
     private String title;
     @Column(name = "description")

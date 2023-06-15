@@ -1,7 +1,8 @@
 package com.technomarket.technomarket.service.impl;
 
+import com.technomarket.technomarket.dto.products.CartDto;
 import com.technomarket.technomarket.entity.Cart;
-import com.technomarket.technomarket.entity.Product;
+import com.technomarket.technomarket.entity.product.Product;
 import com.technomarket.technomarket.entity.User;
 import com.technomarket.technomarket.repository.CartRepository;
 import com.technomarket.technomarket.service.CartService;
@@ -32,33 +33,31 @@ public class CartServiceImpl implements CartService {
         this.productService = productService;
     }
 
-
     @Override
-    public Cart getCart(Principal principal) {
-        return getCartByPrincipal(principal);
+    public CartDto getCartDtoByPrincipal(Principal principal) {
+        Cart cart =  findCartByPrincipal(principal);
+        return CartDto.fromCart(cart);
     }
 
-    public Cart getCartByPrincipal(Principal principal){
+    public Cart findCartByPrincipal(Principal principal){
         if (principal == null){
             throw new UnauthorizedAccessException("User is not authorized!");
         }
-        String username = principal.getName();
-        User user = userService.findByUsername(username);
-        Optional<Cart> cart = cartRepository.findCartByUser(user);
+        Optional<Cart> cart = cartRepository.findCartByUser(userService.findUserByUsername(principal.getName()));
         return cart.orElseGet(() -> getEmptyCart(principal));
     }
 
     public Cart getEmptyCart(Principal principal){
         Cart cart = new Cart();
         cart.setProducts(new ArrayList<>());
-        cart.setUser(userService.getUserByPrincipal(principal));
+        cart.setUser(userService.findUserByPrincipal(principal));
         return cart;
     }
 
     @Override
-    public void addToCart(Long productId, Principal principal){
-        Cart cart = getCart(principal);
-        Product product = productService.getProductById(productId);
+    public void addProductToCart(Long productId, Principal principal){
+        Cart cart = findCartByPrincipal(principal);
+        Product product = productService.findProductById(productId);
         if (cart.getProducts().stream()
                 .anyMatch(productFromCart -> productFromCart.getId().equals(productId))){
             throw new ContentAlreadyExistException("Product is already in cart");
@@ -68,12 +67,12 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public Cart deleteFromCart(Long id, Principal principal){
-        Cart cart = getCartByPrincipal(principal);
+    public CartDto deleteProductFromCart(Long id, Principal principal){
+        Cart cart = findCartByPrincipal(principal);
         cart.getProducts().removeIf(product -> product.getId().equals(id));
         cartRepository.deleteById(cart.getId());
         cartRepository.save(cart);
-        return cart;
+        return CartDto.fromCart(cart);
     }
 
 

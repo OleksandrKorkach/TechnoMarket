@@ -1,5 +1,8 @@
 package com.technomarket.technomarket.service.impl;
 
+import com.technomarket.technomarket.dto.users.UserDto;
+import com.technomarket.technomarket.dto.users.UserSummaryDto;
+import com.technomarket.technomarket.dto.users.auth.UserRegistrationDto;
 import com.technomarket.technomarket.entity.Role;
 import com.technomarket.technomarket.entity.User;
 import com.technomarket.technomarket.entity.enums.Status;
@@ -10,6 +13,8 @@ import com.technomarket.technomarket.service.impl.exceptions.ResourceNotFoundExc
 import com.technomarket.technomarket.service.impl.exceptions.UnauthorizedAccessException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +22,7 @@ import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -34,23 +40,38 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void register(User user) {
-        Role roleUser = roleRepository.findByName("ROLE_USER");
-        List<Role> userRoles = new ArrayList<>();
-        userRoles.add(roleUser);
-
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        user.setRoles(userRoles);
-        user.setStatus(Status.ACTIVE);
-        user.setCreated(LocalDateTime.now());
-        user.setUpdated(LocalDateTime.now());
+    public void register(UserRegistrationDto registrationDto) {
+        User user = registrationDto.toUser();
+        setUserRoles(user);
+        setRegistrationDetails(user);
         User registeredUser = userRepository.save(user);
-
         log.info("IN registration - user: {} successfully registered", registeredUser);
     }
 
+    public void setUserRoles(User user){
+        Role userRole = roleRepository.findByName("ROLE_USER");
+        List<Role> userRoles = new ArrayList<>();
+        userRoles.add(userRole);
+        user.setRoles(userRoles);
+    }
+
+    public void setRegistrationDetails(User user){
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setStatus(Status.ACTIVE);
+        user.setCreated(LocalDateTime.now());
+        user.setUpdated(LocalDateTime.now());
+    }
+
     @Override
-    public List<User> getAll() {
+    public List<UserSummaryDto> getAllUsersSummaryDto(){
+        List<User> users = findAllUsers();
+        return users.stream()
+                .map(UserSummaryDto::fromUser)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<User> findAllUsers() {
         List<User> allUsers = userRepository.findAll();
         if (allUsers.isEmpty()){
             throw new ResourceNotFoundException("No users in db");
@@ -59,7 +80,12 @@ public class UserServiceImpl implements UserService {
         return allUsers;
     }
 
-    public User getUserByPrincipal(Principal principal) {
+    @Override
+    public Principal getPrincipal(){
+       return SecurityContextHolder.getContext().getAuthentication();
+    }
+
+    public User findUserByPrincipal(Principal principal) {
         if (principal == null) {
             throw new UnauthorizedAccessException("Unauthorized request, please login first");
         }
@@ -67,14 +93,23 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User findByUsername(String username) {
+    public User findUserByUsername(String username) {
         User user = userRepository.findByUsername(username);
+        if (user == null){
+            throw new UsernameNotFoundException("User with username: " + username + " not found");
+        }
         log.info("IN findByUsername - user: {} found by username {}", user, username);
         return user;
     }
 
     @Override
-    public User getUserById(Long id) {
+    public UserDto getUserDtoById(Long id){
+        User user = findUserById(id);
+        return UserDto.fromUser(user);
+    }
+
+    @Override
+    public User findUserById(Long id) {
         User user = userRepository.findById(id).orElse(null);
         if (user == null){
             throw new ResourceNotFoundException("User not found with id: " + id);
@@ -84,7 +119,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void deleteById(Long id) {
+    public void deleteUserById(Long id) {
         if (userRepository.existsById(id)){
             userRepository.deleteById(id);
             log.info("successfully deleted user with id {}", id);

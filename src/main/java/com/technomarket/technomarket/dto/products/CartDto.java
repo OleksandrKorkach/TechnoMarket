@@ -2,7 +2,7 @@ package com.technomarket.technomarket.dto.products;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.technomarket.technomarket.entity.Cart;
-import com.technomarket.technomarket.entity.Product;
+import com.technomarket.technomarket.entity.product.Product;
 import lombok.Data;
 
 import java.util.List;

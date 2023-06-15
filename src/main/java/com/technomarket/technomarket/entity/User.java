@@ -1,11 +1,11 @@
 package com.technomarket.technomarket.entity;
 
 import com.technomarket.technomarket.entity.enums.Status;
+import com.technomarket.technomarket.entity.product.Product;
 import lombok.Data;
 import org.springframework.data.annotation.LastModifiedDate;
 
 import javax.persistence.*;
-import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;

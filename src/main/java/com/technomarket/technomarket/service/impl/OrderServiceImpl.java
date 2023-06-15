@@ -1,6 +1,10 @@
 package com.technomarket.technomarket.service.impl;
 
-import com.technomarket.technomarket.entity.Product;
+import com.technomarket.technomarket.dto.order.DeliveryPointDto;
+import com.technomarket.technomarket.dto.order.OrderDto;
+import com.technomarket.technomarket.dto.order.OrderSummaryDto;
+import com.technomarket.technomarket.entity.order.OrderCreationRequest;
+import com.technomarket.technomarket.entity.product.Product;
 import com.technomarket.technomarket.entity.enums.DeliveryMethod;
 import com.technomarket.technomarket.entity.enums.OrderStatus;
 import com.technomarket.technomarket.entity.order.DeliveryPoint;
@@ -14,11 +18,13 @@ import com.technomarket.technomarket.service.UserService;
 import com.technomarket.technomarket.service.impl.exceptions.UnauthorizedAccessException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -39,45 +45,61 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public void createOrderFromProduct(Long productId, Principal principal) {
+    public void createOrderFromProduct(OrderCreationRequest request) {
         Order order = new Order();
-        List<Product> products = new ArrayList<>();
-        Product product = productService.getProductById(productId);
-        products.add(product);
-        order.setProducts(products);
-        order.setUser(userService.getUserByPrincipal(principal));
-        order.setOrderPrice(product.getPrice());
-        order.setStatus(OrderStatus.WAITING_FOR_DELIVERY);
-        order.setDeliveryMethod(DeliveryMethod.IN_DELIVERY_POINT);
-        order.setDeliveryPoint("Cool delivery point");
+        Principal principal = userService.getPrincipal();
+        request.setPrincipal(principal);
+        setOrderProducts(order, request);
+        setCommonOrderDetails(order, request);
         orderRepository.save(order);
     }
 
     @Override
-    public void createOrderFromCart(Principal principal) {
+    public void createOrderFromCart(OrderCreationRequest request) {
         Order order = new Order();
+        Principal principal = userService.getPrincipal();
+        request.setPrincipal(principal);
+        setOrderProducts(order, request);
+        setCommonOrderDetails(order, request);
+        orderRepository.save(order);
+    }
+
+    public void setOrderProducts(Order order, OrderCreationRequest request){
         List<Product> products = new ArrayList<>();
-        products.addAll(cartService.getCart(principal).getProducts());
-        order.setProducts(products);
-        order.setUser(userService.getUserByPrincipal(principal));
-        Double orderPrice = 0.0;
-        for (Product product : products){
-            orderPrice += product.getPrice();
+        if (request.getProductId() == null){
+            products.addAll(cartService.findCartByPrincipal(request.getPrincipal()).getProducts());
+        } else {
+            products.add(productService.findProductById(request.getProductId()));
         }
+        order.setProducts(products);
+    }
+
+    public void setCommonOrderDetails(Order order, OrderCreationRequest request) {
+        order.setUser(userService.findUserByPrincipal(request.getPrincipal()));
+        Double orderPrice = order.getProducts().stream()
+                .mapToDouble(Product::getPrice)
+                .sum();
         order.setOrderPrice(orderPrice);
         order.setStatus(OrderStatus.WAITING_FOR_DELIVERY);
-        order.setDeliveryMethod(DeliveryMethod.IN_DELIVERY_POINT);
-        order.setDeliveryPoint("Very big cool delivery point");
-        System.out.println(order);
-        orderRepository.save(order);
+        order.setDeliveryMethod(DeliveryMethod.valueOf(request.getDeliveryMethod().toUpperCase()));
+        if (order.getDeliveryMethod().equals(DeliveryMethod.IN_DELIVERY_POINT)) {
+            order.setDeliveryPoint(deliveryPointRepository.findById(request.getDeliveryPointId()).get().getName());
+        } else order.setDeliveryPoint("Self-delivery from shop");
     }
 
     @Override
-    public List<Order> getOrdersByPrincipal(Principal principal){
+    public List<OrderSummaryDto> getOrdersSummaryDtoByPrincipal(Principal principal) {
+        List<Order> orders = findOrdersByPrincipal(principal);
+        return orders.stream()
+                .map(OrderSummaryDto::fromOrder)
+                .collect(Collectors.toList());
+    }
+
+    public List<Order> findOrdersByPrincipal(Principal principal) {
         String principalName = principal.getName();
         List<Order> orders = new ArrayList<>();
-        for (Order order: orderRepository.findAll()){
-            if (order.getUser().getUsername().equals(principalName)){
+        for (Order order : orderRepository.findAll()) {
+            if (order.getUser().getUsername().equals(principalName)) {
                 orders.add(order);
             }
         }
@@ -85,10 +107,14 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Order getOrderById(Long orderId, Principal principal){
-        String principalName = principal.getName();
+    public OrderDto getOrderDtoById(Long orderId, Principal principal) {
+        Order order = findOrderById(orderId, principal);
+        return OrderDto.fromOrder(order);
+    }
+
+    public Order findOrderById(Long orderId, Principal principal) {
         Order order = orderRepository.getById(orderId);
-        if (order.getUser().getUsername().equals(principalName)){
+        if (order.getUser().getUsername().equals(principal.getName())) {
             return order;
         } else {
             throw new UnauthorizedAccessException("You don't have enough authorities to get this order");
@@ -96,8 +122,15 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<DeliveryPoint> getDeliveryPoints(String city) {
-        if (city == null){
+    public List<DeliveryPointDto> getDeliveryPointsDto(String city){
+        List<DeliveryPoint> points = findDeliveryPoints(city);
+        return points.stream().
+                map(DeliveryPointDto::fromDeliveryPoint)
+                .collect(Collectors.toList());
+    }
+
+    public List<DeliveryPoint> findDeliveryPoints(String city) {
+        if (city == null) {
             return deliveryPointRepository.findAll();
         } else {
             return deliveryPointRepository.findDeliveryPointByCity(city);

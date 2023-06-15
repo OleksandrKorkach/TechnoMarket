@@ -38,11 +38,7 @@ public class AuthController {
         try{
             String username = requestDto.getUsername();
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, requestDto.getPassword()));
-            User user = userService.findByUsername(username);
-
-            if (user == null){
-                throw new UsernameNotFoundException("User with username: " + username + " not found");
-            }
+            User user = userService.findUserByUsername(username);
 
             String token = jwtTokenProvider.createToken(username, user.getRoles());
 
@@ -58,8 +54,7 @@ public class AuthController {
 
     @PostMapping("/registration")
     public ResponseEntity<?> register(@RequestBody UserRegistrationDto registrationDto){
-        User user = registrationDto.toUser();
-        userService.register(user);
-        return ResponseEntity.ok().body("Successfully created!");
+        userService.register(registrationDto);
+        return ResponseEntity.ok().body("Successfully created new user!");
     }
 }

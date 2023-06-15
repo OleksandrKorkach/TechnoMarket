@@ -23,18 +23,14 @@ public class UserController {
 
     @GetMapping
     public ResponseEntity<List<UserSummaryDto>> getUsers(){
-        List<User> users = userService.getAll();
-        List<UserSummaryDto> response = users.stream()
-                .map(UserSummaryDto::fromUser)
-                .collect(Collectors.toList());
-        return ResponseEntity.ok(response);
+        List<UserSummaryDto> users = userService.getAllUsersSummaryDto();
+        return ResponseEntity.ok(users);
     }
 
     @GetMapping("/user{id}")
     public ResponseEntity<?> getUserById(@PathVariable Long id){
-        User user = userService.getUserById(id);
-        UserDto response = UserDto.fromUser(user);
-        return ResponseEntity.ok(response);
+        UserDto user = userService.getUserDtoById(id);
+        return ResponseEntity.ok(user);
     }
 
 

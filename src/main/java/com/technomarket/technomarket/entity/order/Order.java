@@ -1,6 +1,6 @@
 package com.technomarket.technomarket.entity.order;
 
-import com.technomarket.technomarket.entity.Product;
+import com.technomarket.technomarket.entity.product.Product;
 import com.technomarket.technomarket.entity.User;
 import com.technomarket.technomarket.entity.enums.DeliveryMethod;
 import com.technomarket.technomarket.entity.enums.OrderStatus;

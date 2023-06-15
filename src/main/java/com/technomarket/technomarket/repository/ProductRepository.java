@@ -1,16 +1,13 @@
-package com.technomarket.technomarket.repository.product;
+package com.technomarket.technomarket.repository;
 
-import com.technomarket.technomarket.entity.Product;
-import com.technomarket.technomarket.entity.enums.Category;
+import com.technomarket.technomarket.entity.product.Product;
+import com.technomarket.technomarket.entity.product.ProductFilter;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-import org.springframework.web.bind.annotation.ModelAttribute;
-
-import java.util.List;
 
 @Repository
 public interface ProductRepository extends PagingAndSortingRepository<Product, Long>{
